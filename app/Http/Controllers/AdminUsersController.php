@@ -9,6 +9,7 @@ use App\Role;
 use Illuminate\Http\Request;
 
 use App\User;
+use Illuminate\Support\Facades\Session;
 
 class AdminUsersController extends Controller
 {
@@ -53,6 +54,8 @@ class AdminUsersController extends Controller
 
         if(trim($request->password) == ''){
 
+
+
             $input = $request->except('password');
 
         }else{
@@ -70,6 +73,14 @@ class AdminUsersController extends Controller
             $file->move('images', $name);
 
             $photo = Photo::create(['file'=> $name]);
+
+            $input['photo_id'] = $photo->id;
+
+        }else{
+
+            $file = 'no_image.png';
+
+            $photo = Photo::create(['file' => $file]);
 
             $input['photo_id'] = $photo->id;
 
@@ -123,7 +134,22 @@ class AdminUsersController extends Controller
         //
         $user = User::findOrFail($id);
 
+        if ($user->photo_id == null){
+
+            $file = 'no_image.png';
+
+            $photo = Photo::create(['file' => $file]);
+
+            $input['photo_id'] = $photo->id;
+        }
+
         if(trim($request->password) == ''){
+
+            $file = 'no_image.png';
+
+            $photo = Photo::create(['file' => $file]);
+
+            $input['photo_id'] = $photo->id;
 
             $input = $request->except('password');
 
@@ -135,9 +161,13 @@ class AdminUsersController extends Controller
 
         }
 
-        $input = $request->all();
-
         if($file = $request->file('photo_id')){
+
+            if($user->photo->file != "/images/no_image.png"){
+
+                unlink(public_path() . $user->photo->file);
+
+            }
 
             if(trim($request->password) == ''){
 
@@ -145,9 +175,10 @@ class AdminUsersController extends Controller
 
             }else{
 
+                $input['password'] = bcrypt($request->password);
+
                 $input = $request->all();
 
-                $input['password'] = bcrypt($request->password);
 
             }
 
@@ -177,6 +208,19 @@ class AdminUsersController extends Controller
      */
     public function destroy($id)
     {
+        $user = User::findOrFail($id);
         //
+        if($user->photo->file != "/images/no_image.png"){
+
+            unlink(public_path() . $user->photo->file);
+        }
+
+        $user->delete();
+
+        Session::flash('deleted_user', 'The user has been deleted');
+
+        return redirect('/admin/users');
+
+
     }
 }

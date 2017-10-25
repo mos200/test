@@ -7,7 +7,7 @@
 
     <div class="col-sm-3">
 
-        <img src="{{$user->photo ? $user->photo->file : 'http://via.placeholder.com/400x400'}}" alt="" class="img-responsive img-rounded">
+        <img src="{{$user->photo ? $user->photo->file : '/images/no_image.png'}}" alt="" class="img-responsive img-rounded">
 
     </div>
 
@@ -45,9 +45,21 @@
         </div>
 
         <div class="form-group">
-            {!! Form::submit('Create User', ['class'=>'btn btn-primary']) !!}
+            {!! Form::submit('Update User', ['class'=>'btn btn-primary col-sm-5']) !!}
         </div>
+
         {!! Form::close() !!}
+
+
+
+        {!! Form::open(['method'=>'DELETE', 'action'=> ['AdminUsersController@destroy', $user->id]]) !!}
+
+                <div class="form-group">
+                    {!! Form::submit('Delete User', ['class'=>'btn btn-danger col-sm-5 pull-right']) !!}
+                </div>
+
+        {!! Form::close() !!}
+
     </div>
 
 @endsection
