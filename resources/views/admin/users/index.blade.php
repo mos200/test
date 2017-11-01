@@ -4,11 +4,10 @@
 
 	@if(Session::has('deleted_user'))
 
-
-
 		<div class="alert alert-danger" role="alert">
 			<p>{{session('deleted_user')}}</p>
 		</div>
+
 	@endif
 
 	<h1>Users</h1>
@@ -32,7 +31,8 @@
 	    	@if($users)
 
 	    	@foreach($users as $user)
-		      <tr>
+
+				<tr>
 		        <td>{{$user->id}}</td>
 				<td><img height="50" src="{{$user->photo ? $user->photo->file : '/images/no_image.png'}}" alt=""></td>
 				<td><a href="{{route('users.edit', $user->id)}}">{{$user->name}}</a></td>
@@ -42,6 +42,7 @@
 		        <td>{{$user->created_at->diffForHumans()}}</td>
 		        <td>{{$user->updated_at->diffForHumans()}}</td>
 		      </tr>
+
 		    @endforeach
 
 		    @endif

@@ -9,6 +9,7 @@ use App\Role;
 use Illuminate\Http\Request;
 
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class AdminUsersController extends Controller
@@ -134,26 +135,29 @@ class AdminUsersController extends Controller
         //
         $user = User::findOrFail($id);
 
-        if ($user->photo_id == null){
-
-            $file = 'no_image.png';
-
-            $photo = Photo::create(['file' => $file]);
-
-            $input['photo_id'] = $photo->id;
-        }
-
         if(trim($request->password) == ''){
 
-            $file = 'no_image.png';
+            if ($user->photo_id == null) {
 
-            $photo = Photo::create(['file' => $file]);
+                $file = 'no_image.png';
 
-            $input['photo_id'] = $photo->id;
+                $photo = Photo::create(['file' => $file]);
+
+                $user['photo_id'] = $photo->id;
+            }
 
             $input = $request->except('password');
 
         }else{
+
+            if ($user->photo_id == null) {
+
+                $file = 'no_image.png';
+
+                $photo = Photo::create(['file' => $file]);
+
+                $user['photo_id'] = $photo->id;
+            }
 
             $input = $request->all();
 
@@ -163,11 +167,11 @@ class AdminUsersController extends Controller
 
         if($file = $request->file('photo_id')){
 
-            if($user->photo->file != "/images/no_image.png"){
-
-                unlink(public_path() . $user->photo->file);
-
-            }
+//            if($user->photo->file != "/images/no_image.png"){
+//
+//                unlink(public_path() . $user->photo->file);
+//
+//            }
 
             if(trim($request->password) == ''){
 
